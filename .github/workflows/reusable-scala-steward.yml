@@ -1,0 +1,44 @@
+name: Reusable Scala Steward workflow
+
+on:
+  workflow_call:
+    inputs:
+      app_id:
+        required: true
+        type: string
+      app_installation_id:
+        required: true
+        type: string
+    secrets:
+      private_key:
+        required: true
+
+jobs:
+  scala-steward:
+    name: scala-steward
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo for REPOSITORIES.md
+        uses: actions/checkout@v4
+      - name: Checkout wellcomecollection/scala-steward for our shared standard scala-steward.conf
+        uses: actions/checkout@v4
+        with:
+          repository: wellcomecollection/scala-steward
+          path: common-config
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "11"
+          distribution: "temurin"
+
+      - name: Execute Scala Steward
+        uses: scala-steward-org/scala-steward-action@v2.65.0
+
+        with:
+          github-app-id: ${{ inputs.app_id }}
+          github-app-installation-id: ${{ inputs.app_installation_id }}
+          github-app-key: ${{ secrets.private_key }}
+          repos-file: REPOSITORIES.md # possibly no longer necessary, thanks to `github-app-*` configuration
+          repo-config: common-config/scala-steward.conf # from checkout of wellcomecollection/scala-steward
+          other-args: "--add-labels"
