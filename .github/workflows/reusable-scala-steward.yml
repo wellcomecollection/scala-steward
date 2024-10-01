@@ -36,6 +36,7 @@ jobs:
         uses: scala-steward-org/scala-steward-action@v2.65.0
 
         with:
+          github-app-auth-only: true
           github-app-id: ${{ inputs.app_id }}
           github-app-installation-id: ${{ inputs.app_installation_id }}
           github-app-key: ${{ secrets.private_key }}
